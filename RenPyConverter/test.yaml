@@ -1,0 +1,1128 @@
+label quest_jacklyn_sweets_start:
+  guard "ZzzZzzzzZzz..."
+  "That lazy son of a bitch. Asleep on the job again."
+  "Not that I can really hold it against him... Nothing ever happens around here."
+  show jo sad at appear_from_left
+  jo sad "I hope you're not bothering the [guard], [mc]."
+  mc "Bothering? Not exactly."
+  jo thinking "Good. I don't want you getting in his way. He has a very important job.{space=-45}"
+  mc "I mean, yeah, if he's working as a guinea pig for the sleep clinic..."
+  jo annoyed "I think you should drop that sarcasm, young man. It's not very befitting."
+  mc "He's sleeping on the job and I'm getting shit? Classic."
+  jo annoyed "I don't want to hear you saying that word."
+  mc "\"Classic?\" Oh, I'm so sorry. Should I call it the C-word from now on?{space=-10}"
+  jo angry "Don't play the fool with me, [mc]! You know exactly what I meant."
+  "No point arguing with her — I'll just end up grounded."
+  mc "Sorry, [jo]."
+  jo smile "That's okay, dear. I think this is a good teaching moment."
+  mc "What is?"
+  jo smile "Being an adult isn't always easy. You have a lot of responsibilities, and some things keep you up at night."
+  "Don't I know it..."
+  jo confident "So, instead of cracking jokes at this poor man's expense, how about you make his day a little bit easier?"
+  "He's legit sleeping all day! How could it possibly be any easier?"
+  jo confident "I want you to get him something nice from the cafeteria for when he wakes up."
+  mc "You can't be serious..."
+  jo skeptical "I am very much serious, [mc]. Now, get to it!"
+  mc "Yes, [jo]..."
+  jo confident "Good! I'm proud of you."
+  show jo confident at disappear_to_left
+  "Great. Feeding a doughnut addict. Seems like a fantastic idea."
+  $quest.jacklyn_sweets.start()
+  return
+
+label quest_jacklyn_sweets_doughnuts:
+  "There they are — round and glazed as the day they were baked."
+  mc "Excuse me."
+  "Hmm... the lunch ladies are all busy in the back of the kitchen, no doubt drawing pentagrams around the chicken broth."
+  mc "Excuse me!"
+  "..."
+  "Well, I don't have all day."
+  menu(side="middle"):
+    extend ""
+    "?mc.money>=20@[mc.money]/20|{image=ui hud icon_money}|Leave some cash on the counter":
+      $mc.love+=1
+      "I can't believe I'm spending my hard earned dough on the [guard]."
+      $mc.money-=20
+      "Well, twenty bucks worth of doughnuts should hopefully sate his hunger..."
+      $mc.add_item("doughnut",10)
+      if nurse["strike_book_activated"]:
+        "All right, time to deliver the tributes to the beast."
+      else:
+        jump isabelle_quest_stolen_cafeteria_donut_nurse
+    "?mc.strength>=7@[mc.strength]/7|{image=stats str}|Steal the doughnuts":
+      $mc.lust+=1
+      "Thou shall not steal... but honestly, this is for charity."
+      "Besides, it's dough for the nut-god. That's the only commandment I care about."
+      $mc.add_item("doughnut",10)
+      if quest.isabelle_stolen["hold_your_horse_dick"]: ## The player has already been caught stealing doughnuts by Jacklyn in Stolen Hearts
+        if jo.at("school_cafeteria"):
+          call quest_jacklyn_sweets_doughnuts_jo
+        else:
+          "Starving guards is a serious societal issue! I'm just doing my part."
+      else:
+        call quest_jacklyn_sweets_doughnuts_jacklyn
+    "I also don't have enough money or strength points"  if mc.money < 20 and mc.strength < 7:
+      return
+  $quest.jacklyn_sweets.advance("feed")
+  return
+
+label quest_jacklyn_sweets_feed(item):
+  if item == "doughnut":
+    $doughnuts = mc.owned_item_count("doughnut")
+    if doughnuts < 5:
+      "This guy eats exactly five doughnuts after each nap. I need to get some more to sate his hunger..."
+    else:
+      guard "ZzzzzZzzzzZzz..."
+      "Still sleeping like a baby..."
+      mc "Here you go, big boy."
+      $mc.remove_item("doughnut",5)
+      "This should hopefully bring me some good karma."
+      if not quest.isabelle_stolen["hold_your_horse_dick"] or (quest.isabelle_stolen["hold_your_horse_dick"] and not quest.isabelle_stolen["help_with_the_project"]): ## The player either 1) bought the doughnuts and missed on the Jacklyn interaction, or 2) stole the doughnuts and triggered the Jacklyn interaction, but didn't ask for her help with the fictional art project
+        window hide
+        show jacklyn neutral at appear_from_left
+        pause 0.5
+        window auto
+        "Speaking of good karma..."
+        jacklyn neutral "Do you also shepherd the weak through the valley of darkness?"
+        mc "What?"
+        jacklyn neutral "You're rocking the charity and goodwill part."
+        "What the hell is [jacklyn] on about?"
+        mc "...What?"
+        jacklyn smile "Ezekiel 25:17."
+        mc "Err... I had no idea you were a bible-thumper..."
+        jacklyn smile "The only god I pray to is one of art and pop culture."
+        jacklyn thinking "You, on the third hand, seem to be a devout time-waster."
+        "She's totally judging me for feeding the already fat guard..."
+        "And to be honest, she's right. What the hell am I doing?"
+        "I was given another chance, and this is how I spend it?"
+        mc "I'm not wasting time with pointless charity..."
+        mc "I'm actually, err... working on... an art project? Yes, that's right! Food nouveau, to be precise."
+        jacklyn excited "Bitch, no shot!"
+        mc "Heh, yes... It's true. I scored a gig with a local art magazine."
+        jacklyn laughing "That's stars, babylegs! I'm proud of you."
+        jacklyn laughing "I'd be happy to wedge your gaps."
+        mc "N-no, that's okay!"
+        jacklyn annoyed "Backwards, my man. Everyone has gaps."
+        jacklyn excited "Stop by later, and I'll sound you good!"
+        hide jacklyn with Dissolve(.5)
+        "Well, shit. That's what I get for lying..."
+      $quest.jacklyn_sweets.advance("oldpromises")
+  else:
+    "Waking the [guard] up with my [item.title_lower] sounds like a blast."
+    "A blast that would lead to a year in detention."
+    $quest.jacklyn_sweets.failed_item("guard_booth",item)
+  return
+
+label quest_jacklyn_sweets_oldpromises:
+  show jacklyn smile with Dissolve(.5)
+  jacklyn smile "What's barkin', Snoopy?"
+  mc "Woof, woof!"
+  jacklyn neutral "..."
+  mc "Okay, that was cringe. I'm sorry."
+  jacklyn smile "A bit, yeah."
+  jacklyn smile "So, anyway, how's that art project going?"
+  mc "Art project?"
+  jacklyn thinking "You said food nouveau for a local mag. What magazine was it again?{space=-10}"
+  "Shit. She remembered that."
+  mc "Err... the um... the Newfall... Culinary? Yes, that's it!"
+  jacklyn smile "Wicked. I know the editor there."
+  "Oh, fuck me. I didn't think there was actually a magazine with that name..."
+  "And what are the odds [jacklyn] knows the freaking editor?!"
+  mc "Err, yep. That's it..."
+  "How do I get out of this now?"
+  jacklyn smile "So, what's this project about?"
+  mc "Hmm... doughnuts?"
+  jacklyn neutral "I know, but what's the angle here?"
+  show jacklyn neutral at move_to(.25)
+  menu(side="right"):
+    extend ""
+    "\"I plan to bring new meaning to the phrase 'a feast for your eyes.'\"":
+      show jacklyn neutral at move_to(.5)
+      mc "I plan to bring new meaning to the phrase \"a feast for your eyes.\""
+      $jacklyn.lust-=1
+      jacklyn annoyed "What's that word for things that have been done to death?"
+      mc "\"Cliché?\""
+      jacklyn laughing "Your words, not mine."
+      "Ugh, she's right. Not sure why I care so much about an imaginary art project, though..."
+      "Maybe I just desperately crave her approval?"
+      mc "Do you have any suggestions on improvement?"
+      jacklyn excited "Bro, my vision isn't your vision."
+      mc "Aren't you supposed to be teaching?"
+      jacklyn excited "I just did — don't dig up old graves."
+      mc "Okay..."
+      jacklyn excited "Think of the untouched wilderness instead. Think of mars-landings in swimsuits. Think of the antithesis of suburbia."
+      mc "Hmm..."
+      jacklyn laughing "Find the inspiration, then get to it!"
+      hide jacklyn with Dissolve(.5)
+      "Inspiration... okay..."
+    "\"I'll leave the quantifying of art to the critics.\"":
+      show jacklyn neutral at move_to(.5)
+      mc "I'll leave the quantifying of art to the critics."
+      $jacklyn.lust+=1
+      jacklyn excited "Spoken like a true artist."
+      jacklyn excited "Opinion is fleeting. Art is eternal."
+      mc "I'm particularly uninterested in what the critics have to say."
+      mc "Miserable and talentless, wallowing in their own hypocrisy."
+      jacklyn laughing "If I weren't on the clock, I'd give you a blowjob right now!"
+      mc "I'll give you one instead — you're only half as hot as your mind and vision.{space=-120}"
+      jacklyn laughing "Hah, you sure know how to foreplay."
+      jacklyn excited "Best of luck with your project."
+      hide jacklyn with Dissolve(.5)
+      "Great. Now to figure out what the project is..."
+    "\"Sorry, I don't share my ideas.\"":
+      show jacklyn neutral at move_to(.5)
+      mc "Sorry, I don't share my ideas."
+      jacklyn excited "That's fair and flaxen."
+      jacklyn excited "Many artists only got post-mortem recognition."
+      "Those artists had ideas, though. That's the difference."
+      mc "That's not exactly what I'm going for..."
+      jacklyn laughing "I'm just yanking your leg."
+      jacklyn laughing "You don't have to tell me about your idea, but that also means I can't help you."
+      jacklyn excited "It takes a very skilled or a very delusional artist to never confide in his peers."
+      jacklyn excited "Which one are you? It's worth spending some brain juice on, perhaps.{space=-35}"
+      hide jacklyn with Dissolve(.5)
+      "That is probably worth thinking about..."
+      "Another thing worth thinking about is what in damn hell this project is going to be."
+  "What's something that has always brought me inspiration?"
+  "..."
+  "They say that inspiration comes when you least expect it..."
+  "Maybe I should take a look around to see if something sparks it?"
+  $quest.jacklyn_sweets.advance("inspiration")
+  return
+
+label quest_jacklyn_sweets_inspiration_school_ground_floor:
+  "Inspiration... hmm..."
+  "Girls running up and down the stairs can be inspiring."
+  "[lindsey] falling over also lights my fire..."
+  "Hmm... but what's the angle here?"
+  $quest.jacklyn_sweets["school_ground_floor_checked"] = True
+  return
+
+label quest_jacklyn_sweets_inspiration_school_cafeteria:
+  "There isn't a lot of inspiration to go around here..."
+  "There's always the strawberry juice... but honestly, I already have the doughnuts to work with."
+  $quest.jacklyn_sweets["school_cafeteria_checked"] = True
+  return
+
+label quest_jacklyn_sweets_inspiration_school_gym:
+  "The only thing this place inspires is fear."
+  $quest.jacklyn_sweets["school_gym_checked"] = True
+  return
+
+label quest_jacklyn_sweets_inspiration_school_english_class:
+  "Hmm... they say that books are the best source of inspiration."
+  "Let's see here..."
+  "{i}\"Five Signs Your Wife is a Widow\"{/}"
+  "Nope."
+  "{i}\"Shut Up and Sleep, Mr. Sheep\"{/}"
+  "This might cure my insomnia, but it's not exactly what I'm looking for.{space=-35}"
+  "{i}\"To Kill a Mockingjay — The Hunter's Guide to Ammunition\"{/}"
+  "Nah, better keep looking..."
+  $quest.jacklyn_sweets["school_english_class_checked"] = True
+  return
+
+label quest_jacklyn_sweets_inspiration_school_nurse_room:
+  "Those anatomical posters sure are inspiring..."
+  "But boobs aren't exactly avant-garde... they're more of a classic."
+  $quest.jacklyn_sweets["school_nurse_room_checked"] = True
+  return
+
+label quest_jacklyn_sweets_inspiration_home_bedroom:
+  "Some of my greatest moments of inspiration have occurred in this very room."
+  "If I can't find it here, I'm screwed."
+  $quest.jacklyn_sweets.advance("bedroom")
+  return
+
+label quest_jacklyn_sweets_bedroom_door:
+  "Sometimes you just have to force the inspiration out."
+  "And I'm not leaving until I've got something good."
+  return
+
+label quest_jacklyn_sweets_bedroom_bed:
+  "Daydreaming in bed is meant to inspire, but for me it's a sure way to fall asleep."
+  return
+
+label quest_jacklyn_sweets_bedroom_closet:
+  "The nicest thing anyone has said about my wardrobe is that it's uninspired."
+  return
+
+label quest_jacklyn_sweets_bedroom:
+  "Yes, the internet is the biggest of all sources of inspiration."
+  "Let's ask Google..."
+  "{i}\"Art... inspiration...\"{/}"
+  "Hmm... rainbow eyes, Picasso-style portraits, Eillie freaking Billish, and those damn flamingos. Why are there always flamingos?"
+  "..."
+  "There's nothing good here!"
+  "Maybe xRabbit will have something good?"
+  "Although, mainstream porn is probably the most uninspired shit on the planet."
+  "..."
+  "If only I could stick my own dick in something..."
+  window hide
+  play sound "<from 0.4>bedroom_door"
+  pause 0.5
+  $flora.unequip("flora_pants")
+  if quest.flora_bonsai["love_route"] and not (school_entrance["bus_jacklyn"] or school_entrance["bus_lust"] or school_entrance["bus_love"]):
+    show flora flirty at appear_from_left
+    window auto
+    flora flirty "Hey, can I borrow your xCube?"
+    mc "Have you heard about knocking?"
+    flora worried "Sorry, I forgot..."
+    mc "It's okay."
+    flora worried "So, can I borrow it?"
+    mc "Sure! We could even play together if you like."
+    flora laughing "I don't know... I'm not very good."
+    mc "That's okay, I can teach you!"
+    flora thinking "..."
+    mc "What?"
+    flora thinking "You're being really nice to me lately..."
+    mc "And?"
+    flora worried "I'm... not used to it."
+    mc "Well, I've had a lot of time to think..."
+    "Literally years and years..."
+    mc "And I think you deserve better."
+    $flora.love+=1
+    flora blush "I do?"
+    mc "Okay, don't get any funny ideas now — you're just getting to borrow my xCube."
+    flora laughing "I wasn't...."
+    flora blush "Okay, bye!"
+    window hide
+    show flora blush at disappear_to_left(.75)
+    pause 0.75
+    play sound "<from 9.2 to 10>door_breaking_in"
+    with hpunch
+    window auto
+    "She's so cute when she gets all blushy and nervous."
+    "Is that so wrong to think?"
+    "She has always made me feel inadequate, but maybe it's time to turn that around."
+    "[flora] is pretty amazing when you think about it — she's strong-willed, driven, and doesn't take shit from anyone."
+    "Maybe this is the break I've been looking for... Maybe she's the inspiration I need!"
+    mc "[flora], wait!"
+    show flora blush at appear_from_left(0.5,1.5)
+    flora blush "What?"
+    mc "Well, first of all, you forgot the xCube."
+    flora laughing "Whoops!"
+    mc "Secondly, I need your help."
+    flora worried "With what, exactly?"
+    mc "You don't have to look so worried..."
+    flora annoyed "It's a reflex."
+    mc "I need inspiration for an art project."
+    flora confused "Since when are you doing art projects?"
+    mc "That's not important! What matters is finding the inspiration."
+    flora sarcastic "Well, I got an A last year from Mrs. Bloomer for my Baroque Bolognese."
+    flora sarcastic "Maybe you can do something with food as well?"
+    mc "Yeah, that's the plan. I have a bunch of doughnuts that I need to incorporate somehow..."
+    flora thinking "Hmm..."
+    flora flirty "..."
+    mc "What?"
+    flora laughing "Oh, nothing!"
+    "She definitely just had an impure thought."
+    mc "Please, I really need help."
+    mc "I know you thought of something!"
+    flora laughing "I don't know what you mean..."
+    mc "[flora], listen. I won't judge you, I promise!"
+    mc "You said it yourself, I've been good to you recently."
+    flora eyeroll "Fine... but I can't say it out loud. I'll text you."
+    flora annoyed_texting "..."
+    flora annoyed_texting "If you show it to anyone, I will murder you. No joke."
+    mc "I promise I won't!"
+    $mc.add_message_to_history("flora", flora, "Doughnut. Glazing. The circle of life.")
+    play sound "<from 0.25>phone_vibrate"
+    flora annoyed_texting "There."
+    flora annoyed "And remember, this conversation never happened."
+    window hide
+    show flora annoyed at disappear_to_left
+    pause 0.5
+    window auto
+    "She forgot the damn xCube again!"
+    "Oh well, let's check that text..."
+    $quest.jacklyn_sweets.advance("text")
+  else:
+    show flora sarcastic at appear_from_left
+    window auto
+    flora sarcastic "Hey, can I borrow your xCube?"
+    mc "Have you heard about knocking?"
+    flora eyeroll "If you were a bit nicer to me, I'm sure things would be different."
+    mc "Is that really how you're going to play it?"
+    mc "I mean, you're the one asking for a favor."
+    flora annoyed_texting "..."
+    mc "What exactly are you doing now?"
+    flora annoyed_texting "Texting [jo]..."
+    mc "Hold on just a moment! I didn't say you couldn't borrow it!"
+    flora annoyed "So, I can borrow it?"
+    mc "Of course!"
+    flora confused "What's the catch?"
+    mc "I need inspiration for an art thing..."
+    flora annoyed "Since when do you like art?!"
+    mc  "Whoa! No need to get your panties in a twist."
+    flora afraid "Don't ever talk about my panties!"
+    flora embarrassed "You're trying to sleep with [jacklyn], aren't you?"
+    mc "Look, I'm just a simple artisan trying to hone my craft."
+    flora crying "You're a troll is what you are!"
+    "She looks like she's about to cry..."
+    window hide
+    show flora crying at disappear_to_left(.75)
+    pause 0.75
+    play sound "<from 9.2 to 10>door_breaking_in"
+    with hpunch
+    window auto
+    "Ever since my date with [jacklyn], [flora] has been on the verge of tears.{space=-40}"
+    "It's somehow ironic that she's the jealous one this time around."
+    "It would make her even more jealous if she saw [jacklyn] giving me a blowjob..."
+    "..."
+    "Hmm..."
+    "I just had the craziest idea! Thank you, [flora]!"
+    "Toward the art classroom!"
+    $quest.jacklyn_sweets.advance("artroom")
+  $flora.equip("flora_pants")
+  return
+
+label quest_jacklyn_sweets_text:
+  $set_dialog_mode("phone_message_plus_textbox","flora")
+  pause 0.5
+  "Hmm... what does that mean?"
+  "Doughnut... glazing... circle of life..."
+  "..."
+  "[flora]!"
+  "You naughty, naughty girl!"
+  window hide
+  $set_dialog_mode()
+  pause 0.5
+  window auto
+  mc "[flora], you're a genius!"
+  "She probably didn't hear that, but heh... I knew she was a freak."
+  "Okay, time to get to work! Next stop: the art classroom."
+  $quest.jacklyn_sweets.advance("artroom")
+  return
+
+label quest_jacklyn_sweets_artroom:
+  "Ah, the place where inspiration is realized!"
+  "Let's see here..."
+  $quest.jacklyn_sweets["arrived_at_artroom"] = True
+  return
+
+label quest_jacklyn_sweets_artroom_interact:
+  if quest.jacklyn_sweets["paper_removed"]:
+    show school art_class art_in_progress canvas as canvas with Dissolve(.5)
+  else:
+    show school art_class art_in_progress canvas as canvas
+    show school art_class art_in_progress paper as paper:
+      xpos 282 ypos 0
+    with Dissolve(.5)
+    "First we need to remove this piece of paper..."
+    "This is not practice. This is the real deal."
+    "Straight on the canvas — nothing else is good enough."
+    window hide
+    hide paper with Dissolve(.5)
+    $quest.jacklyn_sweets["paper_removed"] = True
+    window auto
+  "Now we need some linework, but we're not going to use a pen because that's too cliché for a project like this."
+  "Hmm... what could be used instead?"
+  "I need something truly unique. Something that's never been used to paint with before."
+  hide canvas with Dissolve(.5)
+  return
+
+label quest_jacklyn_sweets_artroom_use(item):
+  if item == "specialized_fuse_cable_replacement_tool":
+    show school art_class art_in_progress canvas as canvas with Dissolve(.5)
+    "It's a specialized tool for a very specific job, but a good artist can always utilize unusual equipment."
+    "Some paint, some finesse, and some artistic prowess."
+    show school art_class art_in_progress sketch_libation as libation:
+      xpos 180 ypos 0
+    show school art_class art_in_progress sketch_suction as suction:
+      xpos 207 ypos 40
+    show school art_class art_in_progress sketch_caramelization as caramelization:
+      xpos 699 ypos 0
+    with Dissolve(.5)
+    "C'est magnifique!"
+    $quest.jacklyn_sweets.advance("paint")
+    $game.location = school_art_in_progress
+  elif item == "high_tech_lockpick":
+    show school art_class art_in_progress canvas as canvas with Dissolve(.5)
+    "Just dip this baby into some paint and slap it across the canvas."
+    "A touch of brilliance and a few strokes of genius."
+    show school art_class art_in_progress sketch_libation as libation:
+      xpos 180 ypos 0
+    show school art_class art_in_progress sketch_suction as suction:
+      xpos 207 ypos 40
+    show school art_class art_in_progress sketch_caramelization as caramelization:
+      xpos 699 ypos 0
+    with Dissolve(.5)
+    "A-ha! Perfection."
+    $quest.jacklyn_sweets.advance("paint")
+    $game.location = school_art_in_progress
+  else:
+    "Nah. Way too mundane for a project like this."
+    $quest.jacklyn_sweets.failed_item("easel",item)
+  return
+
+label quest_jacklyn_sweets_paint:
+  "Now, that's simply fresh as fuck."
+  "Time to brag to [jacklyn]."
+  $school_art_class["exclusive"] = "jacklyn"
+  $quest.jacklyn_sweets.advance("finaltouches")
+  return
+
+label quest_jacklyn_sweets_finaltouches:
+  show jacklyn excited with Dissolve(.5)
+  jacklyn excited "You've really been murdering that canvas lately, [mc]."
+  show jacklyn excited at move_to(.75)
+  menu(side="left"):
+    extend ""
+    "\"That's just frustration.\"":
+      show jacklyn excited at move_to(.5)
+      mc "That's just frustration."
+      jacklyn annoyed "Art isn't always bees and cream."
+      jacklyn cringe "Sometimes you really have to fuck your way to the top."
+      mc "Right. That's... true, I guess."
+      jacklyn neutral "So, which toilet flushed your vibes?"
+      mc "Do you ever feel like you put all your energy and creativity into a piece and you're still not sure if it's any good?"
+      jacklyn smile "For every good idea there's a dozen shitty ones."
+      jacklyn smile_right "Even Da Vinci had a trash can."
+      mc "I suppose he did..."
+    "?mc.charisma>=7@[mc.charisma]/7|{image=stats cha}|\"If it ain't a crime scene, it ain't art.\"{space=-20}":
+      show jacklyn excited at move_to(.5)
+      mc "If it ain't a crime scene, it ain't art."
+      $jacklyn.lust+=2
+      jacklyn laughing "Right out of my playbook!"
+      mc "I'm learning a lot from you. More than Mrs. Bloomer ever did."
+      jacklyn excited "I'm just showing you the ropes. You'll have to tie the knot yourself."
+      mc "And that's what I like about you."
+      mc "Well, one of the things."
+      jacklyn neutral "You're totally giving me a blowjob, aren't you?"
+      mc "Well, I..."
+      jacklyn smile "It's cool, I don't mind a little blush."
+      mc "You're not even blushing..."
+      jacklyn smile_right "I am on the inside."
+  mc "All right, I have something to show you."
+  mc "And I want your honest opinion."
+  window hide
+  show black with Dissolve(.5)
+  pause 1.0
+  show jacklyn king_of_sweets_inspection
+  hide black
+  with Dissolve(.5)
+  window auto
+  mc "..."
+  jacklyn king_of_sweets_approval "What the fuck? This is not bad!"
+  mc "Do you really think so?"
+  jacklyn king_of_sweets_approval "I'm always honest when it comes to art. White lies hurt artists more than harsh truths."
+  jacklyn king_of_sweets_approval "It's a decent piece of art, amigo."
+  jacklyn king_of_sweets_inspection "Although..."
+  jacklyn king_of_sweets_inspection "The technique is baller, but it's missing a centerpiece..."
+  mc "Well, I've still to make the final touches."
+  jacklyn king_of_sweets_inspection "Yeah?"
+  show jacklyn king_of_sweets_zipper with Dissolve(.5)
+  mc "Yeah... take a good look."
+  play sound "<to 0.75>nylon_rip"
+  show jacklyn king_of_sweets_dick_out
+  mc "There!" with hpunch
+  jacklyn king_of_sweets_amazed "Whoa! Johnny fucking Bravo!"
+  jacklyn king_of_sweets_amazed "I'm totally catching your electrons right now, you baby genius!"
+  mc "It's a comment on society."
+  jacklyn king_of_sweets_amazed "Damn straight it is!"
+  mc "I call it, the \"King of Sweets.\""
+  jacklyn king_of_sweets_lip_bite "Of course! All the junk food in the world got nothing on the old king!{space=-15}"
+  menu(side="middle"):
+    extend ""
+    "\"Could you take a photo for Newfall Culinary?\"":
+      mc "Could you take a photo for Newfall Culinary?"
+      jacklyn king_of_sweets_lip_bite "Sure thing, babylegs."
+      jacklyn king_of_sweets_camera "..."
+      jacklyn king_of_sweets_camera "Okay, let's film-roll this bad boy!"
+      window hide
+      show jacklyn king_of_sweets_camera_flash with Dissolve(.15)
+      show white with Dissolve(.15)
+      play sound "camera_snap"
+      show jacklyn king_of_sweets_camera
+      hide white
+      with Dissolve(.15)
+      window auto
+      "I never thought it would feel this good to have your junk photographed..."
+      "It's a bit like being a celebrity, in front of the paparazzi."
+      "All celebrities are dicks anyway, so it's fitting."
+      window hide
+      show jacklyn king_of_sweets_camera_flash with Dissolve(.15)
+      show white with Dissolve(.15)
+      play sound "camera_snap"
+      show jacklyn king_of_sweets_camera
+      hide white
+      with Dissolve(.15)
+      window auto
+      "Maybe that would be an idea for a new project?"
+      "What if I could make a name for myself as the dick-artist?"
+      "The girls would surely come flocking."
+      window hide
+      show jacklyn king_of_sweets_camera_flash with Dissolve(.15)
+      show white with Dissolve(.15)
+      play sound "camera_snap"
+      show jacklyn king_of_sweets_camera
+      hide white
+      with Dissolve(.15)
+      window auto
+      "..."
+      "I think [jacklyn]'s exhibitionism is rubbing off on me..."
+      "If only she would rub me off..."
+      window hide
+      show jacklyn king_of_sweets_camera_flash with Dissolve(.15)
+      show white with Dissolve(.15)
+      play sound "camera_snap"
+      show jacklyn king_of_sweets_camera
+      hide white
+      with Dissolve(.15)
+      window auto
+      "Another time, perhaps — those who wait for something good, and all that jazz."
+      "She's a great mentor. Maybe you just don't fuck your mentor?"
+      "That's surely a code or something."
+      window hide
+      show jacklyn king_of_sweets_camera_flash with Dissolve(.15)
+      show white with Dissolve(.15)
+      play sound "camera_snap"
+      pause 1.0
+      show jacklyn smile
+      hide white
+      with Dissolve(.5)
+      window auto
+      jacklyn smile "Big stars on your first true piece of art!"
+      mc "Thanks, [jacklyn]!"
+      hide jacklyn with Dissolve(.5)
+      "The only problem is that I now have to contact the journal..."
+      "And potentially have my dick displayed publicly..."
+      "But that's a problem for later."
+      "For now, I'll just get rid of the crime scene..."
+    "?jacklyn.lust>=10@[jacklyn.lust]/10|{image= jacklyn contact_icon}|{image=stats lust_3}|\"Would you like to taste the King of Sweets?\"":
+      mc "Would you like to taste the King of Sweets?"
+      jacklyn king_of_sweets_lip_bite "How could I possibly refuse...?"
+      mc "All right, then — dig in."
+      jacklyn king_of_sweets_realization "Actually, maybe a grade is par for the course first..."
+      jacklyn king_of_sweets_looking_up "Do you think I'm a fair teacher, [mc]?"
+      mc "I guess?"
+      jacklyn king_of_sweets_shirt_lift1 "How about now?"
+      mc "Oh, wow! Pretty fair..."
+      mc "But this took me a {i}lot{/} of effort!"
+      jacklyn king_of_sweets_shirt_lift2 "You're slap right in the bullseye on that."
+      jacklyn king_of_sweets_shirt_lift2 "True raw murder spares..."
+      $jacklyn.unequip("jacklyn_bra")
+      extend " nothing."
+      jacklyn king_of_sweets_stroke1 "Every stroke of the brush not only carries the paint."
+      window hide
+      show jacklyn king_of_sweets_stroke3 with Dissolve(.2)
+      show jacklyn king_of_sweets_stroke4 with Dissolve(.2)
+      pause 0.1
+      show jacklyn king_of_sweets_stroke3 with Dissolve(.2)
+      show jacklyn king_of_sweets_stroke2 with Dissolve(.1)
+      pause 0.3
+      show jacklyn king_of_sweets_stroke3 with Dissolve(.1)
+      show jacklyn king_of_sweets_stroke4 with Dissolve(.2)
+      pause 0.1
+      show jacklyn king_of_sweets_stroke3 with Dissolve(.2)
+      show jacklyn king_of_sweets_stroke2 with Dissolve(.1)
+      window auto
+      mc "Mmmm..."
+      jacklyn king_of_sweets_stroke2 "Every single stroke..."
+      window hide
+      show jacklyn king_of_sweets_stroke3 with Dissolve(.1)
+      show jacklyn king_of_sweets_stroke4 with Dissolve(.1)
+      show jacklyn king_of_sweets_stroke5 with Dissolve(.2)
+      pause 0.3
+      window auto
+      jacklyn king_of_sweets_stroke5 "...from the mind of the artist..."
+      window hide
+      show jacklyn king_of_sweets_stroke4 with Dissolve(.1)
+      show jacklyn king_of_sweets_stroke3 with Dissolve(.1)
+      show jacklyn king_of_sweets_stroke2 with Dissolve(.2)
+      pause 0.3
+      window auto
+      jacklyn king_of_sweets_stroke2 "...down the whole arm..."
+      window hide
+      show jacklyn king_of_sweets_stroke3 with Dissolve(.1)
+      show jacklyn king_of_sweets_stroke4 with Dissolve(.2)
+      pause 0.1
+      show jacklyn king_of_sweets_stroke3 with Dissolve(.2)
+      show jacklyn king_of_sweets_stroke2 with Dissolve(.1)
+      pause 0.2
+      show jacklyn king_of_sweets_stroke3 with Dissolve(.1)
+      show jacklyn king_of_sweets_stroke4 with Dissolve(.1)
+      show jacklyn king_of_sweets_stroke5 with Dissolve(.2)
+      pause 0.1
+      show jacklyn king_of_sweets_stroke4 with Dissolve(.1)
+      show jacklyn king_of_sweets_stroke3 with Dissolve(.1)
+      show jacklyn king_of_sweets_stroke2 with Dissolve(.2)
+      window auto
+      mc "Ohhh!"
+      jacklyn king_of_sweets_stroke2 "...to the flick of the wrist..."
+      window hide
+      show jacklyn king_of_sweets_stroke3 with Dissolve(.1)
+      show jacklyn king_of_sweets_stroke4 with Dissolve(.1)
+      show jacklyn king_of_sweets_stroke5 with Dissolve(.2)
+      pause 0.3
+      window auto
+      jacklyn king_of_sweets_stroke5 "...out to the tip of the brush..."
+      window hide
+      show jacklyn king_of_sweets_stroke4 with Dissolve(.1)
+      show jacklyn king_of_sweets_stroke3 with Dissolve(.1)
+      show jacklyn king_of_sweets_stroke2 with Dissolve(.2)
+      pause 0.3
+      window auto
+      jacklyn king_of_sweets_stroke2 "...and on to the canvas..."
+      window hide
+      show jacklyn king_of_sweets_stroke3 with Dissolve(.1)
+      show jacklyn king_of_sweets_stroke4 with Dissolve(.1)
+      show jacklyn king_of_sweets_stroke5 with Dissolve(.2)
+      pause 0.1
+      show jacklyn king_of_sweets_stroke4 with Dissolve(.1)
+      show jacklyn king_of_sweets_stroke3 with Dissolve(.1)
+      show jacklyn king_of_sweets_stroke2 with Dissolve(.2)
+      pause 0.1
+      show jacklyn king_of_sweets_stroke3 with Dissolve(.1)
+      show jacklyn king_of_sweets_stroke4 with Dissolve(.1)
+      show jacklyn king_of_sweets_stroke5 with Dissolve(.2)
+      pause 0.1
+      show jacklyn king_of_sweets_stroke4 with Dissolve(.1)
+      show jacklyn king_of_sweets_stroke3 with Dissolve(.1)
+      show jacklyn king_of_sweets_stroke2 with Dissolve(.2)
+      pause 0.1
+      show jacklyn king_of_sweets_stroke3 with Dissolve(.1)
+      show jacklyn king_of_sweets_stroke4 with Dissolve(.2)
+      pause 0.1
+      show jacklyn king_of_sweets_stroke3 with Dissolve(.2)
+      show jacklyn king_of_sweets_stroke2 with Dissolve(.1)
+      pause 0.1
+      show jacklyn king_of_sweets_stroke3 with Dissolve(.1)
+      show jacklyn king_of_sweets_stroke4 with Dissolve(.2)
+      pause 0.1
+      show jacklyn king_of_sweets_stroke3 with Dissolve(.2)
+      show jacklyn king_of_sweets_stroke2 with Dissolve(.1)
+      pause 0.2
+      show jacklyn king_of_sweets_stroke3 with Dissolve(.3)
+      pause 0.3
+      show jacklyn king_of_sweets_stroke2 with Dissolve(.3)
+      pause 0.2
+      show jacklyn king_of_sweets_stroke3 with Dissolve(.3)
+      pause 0.3
+      show jacklyn king_of_sweets_stroke1 with Dissolve(.3)
+      window auto
+      mc "Hnnng!"
+      jacklyn king_of_sweets_stroke1 "...is part of the masterpiece."
+      jacklyn king_of_sweets_stroke1 "And all we can do is admire it."
+      mc "K-keep going! I'm close to—"
+      jacklyn king_of_sweets_stroke6 "Hold on, big boy. I haven't had a taste of it yet..."
+      show jacklyn king_of_sweets_admiration with Dissolve(.5)
+      "[jacklyn] eyes my dick with delight and admiration."
+      "And it's like the clouds break and a beam of clarity fills my mind."
+      "It's all about context!"
+      "It's a dick like any other, except now it's something more than just a rod of flesh."
+      "It's a symbol."
+      "People crave all sorts of sweets — pastries, soda, snacks, and candy.{space=-35}"
+      "But at the end of the day, they're not playing in the same league as the king."
+      "The symbol of life itself."
+      "Of course, someone like [jacklyn] appreciates that."
+      jacklyn king_of_sweets_taste1 "Mmmm!"
+      window hide
+      show jacklyn king_of_sweets_taste2 with Dissolve(.4)
+      pause 0.2
+      show jacklyn king_of_sweets_taste1 with Dissolve(.4)
+      pause 0.2
+      show jacklyn king_of_sweets_taste2 with Dissolve(.4)
+      pause 0.2
+      show jacklyn king_of_sweets_taste1 with Dissolve(.4)
+      pause 0.2
+      show jacklyn king_of_sweets_taste2 with Dissolve(.4)
+      pause 0.2
+      show jacklyn king_of_sweets_taste1 with Dissolve(.4)
+      window auto
+      mc "Oooh..."
+      "Her wrapping her lips around the tip and sucking it vigorously?"
+      "That, too, is a symbol..."
+      "There's nothing dirty about her tongue massaging the length of my shaft."
+      "Nothing dirty about her coating me in hot saliva. Adding suction. Sucking me deeper into her mouth."
+      window hide
+      show jacklyn king_of_sweets_taste2 with Dissolve(.4)
+      pause 0.2
+      show jacklyn king_of_sweets_taste1 with Dissolve(.4)
+      pause 0.2
+      show jacklyn king_of_sweets_taste2 with Dissolve(.4)
+      pause 0.2
+      show jacklyn king_of_sweets_taste1 with Dissolve(.4)
+      pause 0.6
+      show jacklyn king_of_sweets_taste3 with Dissolve(.4)
+      pause 0.6
+      show jacklyn king_of_sweets_taste2 with Dissolve(.4)
+      pause 0.2
+      show jacklyn king_of_sweets_taste3 with Dissolve(.4)
+      window auto
+      "Letting the tip of my dick paint every nook and cranny of her mouth in sticky pre-cum."
+      "And then guiding my dick toward the back of her mouth. Teasing me with the opening of her throat."
+      "This is not even a blowjob... this is a statement."
+      "This is what art is about."
+      window hide
+      show jacklyn king_of_sweets_taste2 with Dissolve(.1)
+      show jacklyn king_of_sweets_taste1 with Dissolve(.2)
+      pause 0.1
+      show jacklyn king_of_sweets_taste2 with Dissolve(.2)
+      show jacklyn king_of_sweets_taste3 with Dissolve(.3)
+      pause 0.2
+      show jacklyn king_of_sweets_taste2 with Dissolve(.1)
+      show jacklyn king_of_sweets_taste1 with Dissolve(.2)
+      pause 0.1
+      show jacklyn king_of_sweets_taste2 with Dissolve(.2)
+      show jacklyn king_of_sweets_taste3 with Dissolve(.3)
+      pause 0.2
+      show jacklyn king_of_sweets_taste2 with Dissolve(.3)
+      show jacklyn king_of_sweets_taste3 with Dissolve(.4)
+      pause 0.3
+      show jacklyn king_of_sweets_taste2 with Dissolve(.3)
+      show jacklyn king_of_sweets_taste3 with Dissolve(.4)
+      pause 0.3
+      show jacklyn king_of_sweets_taste2 with Dissolve(.3)
+      show jacklyn king_of_sweets_taste3 with Dissolve(.4)
+      pause 0.3
+      show jacklyn king_of_sweets_taste2 with Dissolve(.3)
+      show jacklyn king_of_sweets_taste3 with Dissolve(.4)
+      window auto
+      mc "F-fuck!"
+      jacklyn king_of_sweets_taste1 "Mmmm..."
+      "This is so much better than in my dream with [kate]..."
+      "That was good and felt real, but..."
+      "[jacklyn] really has a talent for sucking cock."
+      "Her eyes tear up, but she doesn't budge. Doesn't expel me."
+      "She just keeps me deep inside her hot throat."
+      window hide
+      show jacklyn king_of_sweets_deepthroat1 with Dissolve(.5)
+      show jacklyn king_of_sweets_deepthroat2 with Dissolve(.3)
+      pause 0.4
+      show jacklyn king_of_sweets_deepthroat1 with Dissolve(.3)
+      pause 0.1
+      show jacklyn king_of_sweets_deepthroat2 with Dissolve(.3)
+      pause 0.4
+      show jacklyn king_of_sweets_deepthroat1 with Dissolve(.3)
+      pause 0.1
+      show jacklyn king_of_sweets_deepthroat2 with Dissolve(.3)
+      pause 0.4
+      show jacklyn king_of_sweets_deepthroat1 with Dissolve(.3)
+      pause 0.1
+      show jacklyn king_of_sweets_deepthroat2 with Dissolve(.2)
+      show jacklyn king_of_sweets_deepthroat3 with Dissolve(.3)
+      window auto
+      "Maybe art isn't her true calling..."
+      "The way she takes me down her throat and flexes her muscles repeatedly to swallow really makes me feel welcome in her mouth."
+      "Like she wants my dick to stay down there."
+      "Like she enjoys it filling up her throat."
+      window hide
+      show jacklyn king_of_sweets_deepthroat2 with Dissolve(.1)
+      show jacklyn king_of_sweets_deepthroat1 with Dissolve(.2)
+      pause 0.2
+      show jacklyn king_of_sweets_deepthroat2 with Dissolve(.1)
+      show jacklyn king_of_sweets_deepthroat3 with Dissolve(.2)
+      pause 0.2
+      show jacklyn king_of_sweets_deepthroat2 with Dissolve(.1)
+      show jacklyn king_of_sweets_deepthroat1 with Dissolve(.2)
+      pause 0.2
+      show jacklyn king_of_sweets_deepthroat2 with Dissolve(.1)
+      show jacklyn king_of_sweets_deepthroat3 with Dissolve(.2)
+      pause 0.2
+      show jacklyn king_of_sweets_deepthroat2 with Dissolve(.1)
+      show jacklyn king_of_sweets_deepthroat1 with Dissolve(.2)
+      pause 0.2
+      show jacklyn king_of_sweets_deepthroat2 with Dissolve(.1)
+      show jacklyn king_of_sweets_deepthroat3 with Dissolve(.2)
+      pause 0.2
+      show jacklyn king_of_sweets_deepthroat2 with Dissolve(.1)
+      show jacklyn king_of_sweets_deepthroat1 with Dissolve(.2)
+      pause 0.2
+      show jacklyn king_of_sweets_deepthroat2 with Dissolve(.1)
+      show jacklyn king_of_sweets_deepthroat3 with Dissolve(.2)
+      pause 0.2
+      show jacklyn king_of_sweets_deepthroat2 with Dissolve(.2)
+      show jacklyn king_of_sweets_deepthroat1 with Dissolve(.3)
+      window auto
+      "I've always dreamed of a teacher getting on her knees for me."
+      "[jacklyn] has such a strong personality, but she also has no inhibitions.{space=-40}"
+      "It's a deadly combination when it comes to sex."
+      "Did she learn to suck dick like this in art school?"
+      "Because, shit, she's the fucking Picasso of blowjobs."
+      window hide
+      show jacklyn king_of_sweets_deepthroat2 with Dissolve(.1)
+      show jacklyn king_of_sweets_deepthroat3 with Dissolve(.2)
+      show jacklyn king_of_sweets_deepthroat2 with Dissolve(.2)
+      show jacklyn king_of_sweets_deepthroat1 with Dissolve(.1)
+      pause 0.2
+      show jacklyn king_of_sweets_deepthroat2 with Dissolve(.1)
+      show jacklyn king_of_sweets_deepthroat3 with Dissolve(.2)
+      show jacklyn king_of_sweets_deepthroat2 with Dissolve(.2)
+      show jacklyn king_of_sweets_deepthroat1 with Dissolve(.1)
+      pause 0.4
+      show jacklyn king_of_sweets_deepthroat2 with Dissolve(.3)
+      pause 0.1
+      show jacklyn king_of_sweets_deepthroat1 with Dissolve(.3)
+      pause 0.2
+      show jacklyn king_of_sweets_deepthroat2 with Dissolve(.3)
+      pause 0.1
+      show jacklyn king_of_sweets_deepthroat1 with Dissolve(.3)
+      pause 0.4
+      show jacklyn king_of_sweets_deepthroat2 with Dissolve(.1)
+      show jacklyn king_of_sweets_deepthroat3 with Dissolve(.2)
+      show jacklyn king_of_sweets_deepthroat2 with Dissolve(.2)
+      show jacklyn king_of_sweets_deepthroat1 with Dissolve(.1)
+      pause 0.2
+      show jacklyn king_of_sweets_deepthroat2 with Dissolve(.1)
+      show jacklyn king_of_sweets_deepthroat3 with Dissolve(.2)
+      show jacklyn king_of_sweets_deepthroat2 with Dissolve(.2)
+      show jacklyn king_of_sweets_deepthroat1 with Dissolve(.1)
+      pause 0.4
+      show jacklyn king_of_sweets_deepthroat2 with Dissolve(.3)
+      pause 0.1
+      show jacklyn king_of_sweets_deepthroat1 with Dissolve(.3)
+      pause 0.2
+      show jacklyn king_of_sweets_deepthroat2 with Dissolve(.3)
+      pause 0.1
+      show jacklyn king_of_sweets_deepthroat1 with Dissolve(.3)
+      window auto
+      "Although, this is of course not sexual."
+      "Not dirty in the slightest."
+      "This is art."
+      "And in her case... appreciation for art."
+      "You don't fault people for admiring the Birth of Venus."
+      "So, you can't really fault her for enjoying the King of Sweets either."
+      "And damn, does she enjoy it to the fullest! Down to the last inch!"
+      window hide
+      show jacklyn king_of_sweets_assisted_deepthroat1 with Dissolve(.5)
+      pause 0.2
+      show jacklyn king_of_sweets_assisted_deepthroat2 with Dissolve(.1)
+      show jacklyn king_of_sweets_assisted_deepthroat3 with Dissolve(.2)
+      show jacklyn king_of_sweets_assisted_deepthroat2 with Dissolve(.2)
+      show jacklyn king_of_sweets_assisted_deepthroat1 with Dissolve(.1)
+      pause 0.1
+      show jacklyn king_of_sweets_assisted_deepthroat2 with Dissolve(.1)
+      show jacklyn king_of_sweets_assisted_deepthroat3 with Dissolve(.2)
+      show jacklyn king_of_sweets_assisted_deepthroat2 with Dissolve(.2)
+      show jacklyn king_of_sweets_assisted_deepthroat1 with Dissolve(.1)
+      pause 0.1
+      show jacklyn king_of_sweets_assisted_deepthroat2 with Dissolve(.1)
+      show jacklyn king_of_sweets_assisted_deepthroat3 with Dissolve(.2)
+      show jacklyn king_of_sweets_assisted_deepthroat2 with Dissolve(.2)
+      show jacklyn king_of_sweets_assisted_deepthroat1 with Dissolve(.1)
+      pause 0.1
+      show jacklyn king_of_sweets_assisted_deepthroat2 with Dissolve(.1)
+      show jacklyn king_of_sweets_assisted_deepthroat3 with Dissolve(.2)
+      show jacklyn king_of_sweets_assisted_deepthroat2 with Dissolve(.2)
+      show jacklyn king_of_sweets_assisted_deepthroat1 with Dissolve(.1)
+      pause 0.1
+      show jacklyn king_of_sweets_assisted_deepthroat2 with Dissolve(.1)
+      show jacklyn king_of_sweets_assisted_deepthroat3 with Dissolve(.2)
+      show jacklyn king_of_sweets_assisted_deepthroat2 with Dissolve(.2)
+      show jacklyn king_of_sweets_assisted_deepthroat1 with Dissolve(.1)
+      pause 0.1
+      show jacklyn king_of_sweets_assisted_deepthroat2 with Dissolve(.1)
+      show jacklyn king_of_sweets_assisted_deepthroat3 with Dissolve(.2)
+      window auto
+      "If someone walked in on us now, [jacklyn] would have a lot of explaining to do..."
+      "Her sticky lips. Her smudged makeup. Her cock-breath."
+      "She's not exactly a Mona Lisa right now... but she probably would take it in stride."
+      "Maybe even invite the intruder to enjoy the King of Sweets with her?{space=-10}"
+      "God, that would be so hot..."
+      python:
+        girl_lust = [flora.lust,isabelle.lust,jo.lust,kate.lust,lindsey.lust,maxine.lust,mrsl.lust,nurse.lust]
+        girl_name = [flora.name,isabelle.name,jo.name,kate.name,lindsey.name,maxine.name,mrsl.name,nurse.name]
+        most_lust =  girl_name[girl_lust.index(max(girl_lust))]
+        most_lust =  ("the " if most_lust == nurse.name else "") + most_lust
+      "Imagine if [most_lust] got on her knees right next to [jacklyn]..."
+      "Like two art connoisseurs in the Louvre."
+      "And it wouldn't be dirty. It would just be raw and artsy."
+      jacklyn king_of_sweets_taste1 "Fwah!"
+      window hide
+      show jacklyn king_of_sweets_taste2 with Dissolve(.2)
+      show jacklyn king_of_sweets_taste3 with Dissolve(.2)
+      show jacklyn king_of_sweets_taste2 with Dissolve(.2)
+      show jacklyn king_of_sweets_taste1 with Dissolve(.2)
+      pause 0.2
+      show jacklyn king_of_sweets_taste2 with Dissolve(.2)
+      show jacklyn king_of_sweets_taste3 with Dissolve(.2)
+      show jacklyn king_of_sweets_taste2 with Dissolve(.2)
+      show jacklyn king_of_sweets_taste1 with Dissolve(.2)
+      pause 0.2
+      show jacklyn king_of_sweets_taste2 with Dissolve(.2)
+      show jacklyn king_of_sweets_taste3 with Dissolve(.2)
+      show jacklyn king_of_sweets_taste2 with Dissolve(.2)
+      show jacklyn king_of_sweets_taste1 with Dissolve(.2)
+      pause 0.1
+      show jacklyn king_of_sweets_taste2 with Dissolve(.2)
+      show jacklyn king_of_sweets_taste3 with Dissolve(.2)
+      show jacklyn king_of_sweets_taste2 with Dissolve(.2)
+      show jacklyn king_of_sweets_taste1 with Dissolve(.2)
+      show jacklyn king_of_sweets_taste2 with Dissolve(.2)
+      show jacklyn king_of_sweets_taste3 with Dissolve(.2)
+      show jacklyn king_of_sweets_taste2 with Dissolve(.2)
+      show jacklyn king_of_sweets_taste1 with Dissolve(.2)
+      show jacklyn king_of_sweets_taste2 with Dissolve(.2)
+      show jacklyn king_of_sweets_taste3 with Dissolve(.2)
+      show jacklyn king_of_sweets_taste2 with Dissolve(.2)
+      show jacklyn king_of_sweets_taste1 with Dissolve(.2)
+      show jacklyn king_of_sweets_taste2 with Dissolve(.2)
+      show jacklyn king_of_sweets_taste3 with Dissolve(.2)
+      window auto
+      "Uhhh! I'm about to Jackson Pollock all over this bitch!"
+      mc "H-hey, [jacklyn]?"
+      jacklyn king_of_sweets_cum_on_face1 "Hmm? Is it time for the king to take the throne?"
+      mc "Y-yeah..."
+      jacklyn king_of_sweets_cum_on_face1 "You're the artist now — tell me where you want the final splash of color!{space=-85}"
+      menu(side="center"):
+        extend ""
+        "\"I think a face painting is in order...\"":
+          mc "I think a face painting is in order..."
+          jacklyn king_of_sweets_stroke7 "That's photogenic as fuck."
+          jacklyn king_of_sweets_stroke3 "All right... hit me, shooter!"
+          window hide
+          show jacklyn king_of_sweets_stroke4 with Dissolve(.05)
+          show jacklyn king_of_sweets_stroke5 with Dissolve(.1)
+          pause 0.1
+          show jacklyn king_of_sweets_stroke4 with Dissolve(.05)
+          show jacklyn king_of_sweets_stroke3 with Dissolve(.05)
+          show jacklyn king_of_sweets_stroke2 with Dissolve(.1)
+          pause 0.1
+          show jacklyn king_of_sweets_stroke3 with Dissolve(.05)
+          show jacklyn king_of_sweets_stroke4 with Dissolve(.05)
+          show jacklyn king_of_sweets_stroke5 with Dissolve(.1)
+          pause 0.1
+          show jacklyn king_of_sweets_stroke4 with Dissolve(.05)
+          show jacklyn king_of_sweets_stroke3 with Dissolve(.05)
+          show jacklyn king_of_sweets_stroke2 with Dissolve(.1)
+          pause 0.1
+          show jacklyn king_of_sweets_stroke3 with Dissolve(.05)
+          show jacklyn king_of_sweets_stroke4 with Dissolve(.05)
+          show jacklyn king_of_sweets_stroke5 with Dissolve(.1)
+          pause 0.1
+          show jacklyn king_of_sweets_stroke4 with Dissolve(.025)
+          show jacklyn king_of_sweets_stroke3 with Dissolve(.025)
+          show jacklyn king_of_sweets_stroke2 with Dissolve(.05)
+          pause 0.1
+          show jacklyn king_of_sweets_stroke3 with Dissolve(.025)
+          show jacklyn king_of_sweets_stroke4 with Dissolve(.025)
+          show jacklyn king_of_sweets_stroke5 with Dissolve(.05)
+          pause 0.1
+          show jacklyn king_of_sweets_stroke4 with Dissolve(.025)
+          show jacklyn king_of_sweets_stroke3 with Dissolve(.025)
+          show jacklyn king_of_sweets_stroke2 with Dissolve(.05)
+          pause 0.1
+          show jacklyn king_of_sweets_stroke3 with Dissolve(.025)
+          show jacklyn king_of_sweets_stroke4 with Dissolve(.025)
+          show jacklyn king_of_sweets_stroke5 with Dissolve(.05)
+          pause 0.1
+          show jacklyn king_of_sweets_stroke4 with Dissolve(.025)
+          show jacklyn king_of_sweets_stroke3 with Dissolve(.025)
+          show jacklyn king_of_sweets_stroke2 with Dissolve(.05)
+          pause 0.1
+          show jacklyn king_of_sweets_stroke3 with Dissolve(.025)
+          show jacklyn king_of_sweets_stroke4 with Dissolve(.025)
+          show jacklyn king_of_sweets_stroke5 with Dissolve(.05)
+          pause 0.1
+          show jacklyn king_of_sweets_stroke4 with Dissolve(.025)
+          show jacklyn king_of_sweets_stroke3 with Dissolve(.025)
+          show jacklyn king_of_sweets_stroke2 with Dissolve(.05)
+          pause 0.1
+          show jacklyn king_of_sweets_stroke3 with Dissolve(.025)
+          show jacklyn king_of_sweets_stroke4 with Dissolve(.025)
+          show jacklyn king_of_sweets_stroke5 with Dissolve(.05)
+          pause 0.1
+          show jacklyn king_of_sweets_stroke4 with Dissolve(.025)
+          show jacklyn king_of_sweets_stroke3 with Dissolve(.025)
+          show jacklyn king_of_sweets_stroke2 with Dissolve(.05)
+          window auto
+          mc "H-here it comes!"
+          window hide
+          show jacklyn king_of_sweets_cum_on_face1 with Dissolve(.5)
+          show jacklyn king_of_sweets_cum_on_face2 with vpunch
+          window auto
+          jacklyn king_of_sweets_cum_on_face2 "Mmmm!"
+          "Man, there's something special about a teacher wearing your cum on her face..."
+          "[jacklyn] isn't even embarrassed, which makes it even hotter."
+          show jacklyn king_of_sweets_selfie_cum with Dissolve(.5)
+        "\"Swallow it!\"":
+          mc "Swallow it!"
+          jacklyn king_of_sweets_cum_on_face1 "Great art always fills the body and soul."
+          window hide
+          show jacklyn king_of_sweets_taste2 with Dissolve(.3)
+          pause 0.1
+          show jacklyn king_of_sweets_taste1 with Dissolve(.2)
+          pause 0.1
+          show jacklyn king_of_sweets_taste2 with Dissolve(.3)
+          pause 0.1
+          show jacklyn king_of_sweets_taste1 with Dissolve(.2)
+          pause 0.1
+          show jacklyn king_of_sweets_taste2 with Dissolve(.3)
+          pause 0.1
+          show jacklyn king_of_sweets_taste1 with Dissolve(.2)
+          pause 0.1
+          show jacklyn king_of_sweets_taste2 with Dissolve(.3)
+          pause 0.1
+          show jacklyn king_of_sweets_taste1 with Dissolve(.2)
+          pause 0.1
+          show jacklyn king_of_sweets_assisted_taste3 with Dissolve(.3)
+          window auto
+          mc "H-here it comes!"
+          window hide
+          show jacklyn king_of_sweets_assisted_deepthroat1 with Dissolve(.4)
+          show jacklyn king_of_sweets_assisted_deepthroat3 with Dissolve(.3)
+          pause 0.2
+          show jacklyn king_of_sweets_assisted_deepthroat2 with Dissolve(.1)
+          show jacklyn king_of_sweets_assisted_deepthroat1 with Dissolve(.2)
+          pause 0.1
+          show jacklyn king_of_sweets_assisted_deepthroat2 with Dissolve(.2)
+          show jacklyn king_of_sweets_assisted_deepthroat3 with Dissolve(.3)
+          pause 0.1
+          show jacklyn king_of_sweets_assisted_deepthroat2 with Dissolve(.1)
+          show jacklyn king_of_sweets_assisted_deepthroat1 with Dissolve(.2)
+          pause 0.1
+          show jacklyn king_of_sweets_assisted_deepthroat2 with Dissolve(.2)
+          show jacklyn king_of_sweets_assisted_deepthroat3 with Dissolve(.3)
+          pause 0.1
+          show jacklyn king_of_sweets_assisted_deepthroat2 with Dissolve(.1)
+          show jacklyn king_of_sweets_assisted_deepthroat1 with Dissolve(.2)
+          pause 0.1
+          show jacklyn king_of_sweets_assisted_deepthroat2 with Dissolve(.2)
+          show jacklyn king_of_sweets_assisted_deepthroat3 with Dissolve(.3)
+          show jacklyn king_of_sweets_assisted_deepthroat3_cum with hpunch
+          pause 0.5
+          show jacklyn king_of_sweets_assisted_deepthroat3_cum with vpunch
+          pause 0.5
+          show jacklyn king_of_sweets_cum_in_mouth with Dissolve(.5)
+          window auto
+          jacklyn king_of_sweets_cum_in_mouth "Mmmm... thanks for the meal, hot shot."
+          "I feel like I came twice the usual load, but [jacklyn] swallowed it all like a pro."
+          "She's even licking her lips..."
+          show jacklyn king_of_sweets_selfie with Dissolve(.5)
+      jacklyn "And now for the crowning moment..."
+      jacklyn "A clean-filthy shot for the magazine!"
+      window hide
+      show white with Dissolve(.15)
+      play sound "camera_snap"
+      pause 2.0
+      $jacklyn.equip("jacklyn_bra")
+      show jacklyn laughing
+      hide white
+      with Dissolve(.5)
+      window auto
+      jacklyn laughing "Did you enjoy your first art exhibition?"
+      mc "V-very much so..."
+      jacklyn excited "Keep this up, and people will queue for the candy shop."
+      jacklyn excited "This is what art is all about. The whole raw truth."
+      jacklyn excited "No sugarcoating, while literally sugarcoating it. Stars, my man!"
+      jacklyn laughing "Now get those eyes on that murder!"
+      mc "I will! Thanks!"
+      hide jacklyn with Dissolve(.5)
+      "If I'd known there were loopholes like this, I would've studied art way harder last time..."
+      "Although... Mrs. Bloomer would probably have gotten me expelled if I pulled that stunt."
+      "Thank god for [jacklyn] and her taste... in art."
+  $unlock_replay("jacklyn_appraisal")
+  $mc.add_item("king_of_sweets")
+  $school_art_class["exclusive"] = False
+  $quest.jacklyn_sweets.finish()
+  return
+
+label quest_jacklyn_sweets_hang_up:
+  "Now that I'm a certified artist, maybe it's time to hang up a piece of my own?"
+  $home_bedroom["poster_removed"] = True
+  "..."
+  $home_bedroom["king_of_sweets"] = True
+  $mc.remove_item("king_of_sweets")
+  "Yeah, that's the stuff. One day, this piece will be worth millions."
+  return
