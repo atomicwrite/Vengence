@@ -26,7 +26,7 @@ export const store = createStore({
 
         incrementInventory(state, options = {itemId: -1, amount: 0}) {
 
-            let Item = state.PlayerSave.items.find(a => a.itemId === options.itemId);
+            const Item = state.PlayerSave.items.find(a => a.itemId === options.itemId);
             if (!Item) {
                 state.PlayerSave.items.push(new Inventory({
                     itemCount: options.amount,
@@ -40,8 +40,8 @@ export const store = createStore({
         /// for unique items
         incrementInventoryUnique(state, options = {itemId: -1}) {
 
-            let Item = state.PlayerSave.items.find(a => a.itemId === options.itemId);
-            if (Item)
+            const Item = state.PlayerSave.items.find(a => a.itemId === options.itemId);
+            if (Item) //todo: more here
                 return;
 
             state.PlayerSave.items.push(new Inventory({
@@ -71,7 +71,7 @@ export const store = createStore({
 
         },
         SetDefaultQuestValue(state, options = {QuestValue: {}, Name: ''}) {
-            let qstate = state.PlayerSave.ActiveQuestStates.find(a => a.QuestId === "Default");
+            const qstate = state.PlayerSave.ActiveQuestStates.find(a => a.QuestId === "Default");
 
             if (!qstate) {
                 throw new Error("No Such Quest")
@@ -89,7 +89,7 @@ export const store = createStore({
             localStorage.setItem("SaveGame1", JSON.stringify(state.PlayerSave))
         },
         SetQuestValue(state, options = {QuestId: -1, Value: {}, Name: ''}) {
-            let qstate = state.PlayerSave.All.find(a => a.QuestId === options.QuestId);
+            const qstate = state.PlayerSave.All.find(a => a.QuestId === options.QuestId);
 
             if (!qstate) {
                 throw new Error("No Such Quest")
@@ -98,7 +98,7 @@ export const store = createStore({
 
         },
         SetMobValue(state, options = {QuestId: -1, Value: {}, Name: ''}) {
-            let qstate = state.PlayerSave.All.find(a => a.QuestId === options.QuestId);
+            const qstate = state.PlayerSave.All.find(a => a.QuestId === options.QuestId);
 
             if (!qstate) {
                 throw new Error("No Such Quest")
@@ -108,7 +108,7 @@ export const store = createStore({
         },
         SetQuestSection(state, options = {QuestId: -1, Section: ''}) {
 
-            let qstate = state.PlayerSave.ActiveQuestStates.find(a => a.QuestId === options.QuestId);
+            const qstate = state.PlayerSave.ActiveQuestStates.find(a => a.QuestId === options.QuestId);
 
             if (!qstate) {
                 throw new Error("No Such Quest")
@@ -147,7 +147,7 @@ export const store = createStore({
         HasQuestState: state => (QuestId) => {
             return state.PlayerSave.ActiveQuestStates.find(a => a.QuestId === QuestId);
         }, GetMobValue: state => (QuestId, ParameterName) => {
-            let qstate = state.PlayerSave.ActiveQuestStates.find(a => a.QuestId === QuestId);
+            const qstate = state.PlayerSave.ActiveQuestStates.find(a => a.QuestId === QuestId);
 
             if (!qstate) {
                 throw new Error("No Such Quest")
@@ -162,7 +162,7 @@ export const store = createStore({
              * @returns {*}
              */
                 (QuestId, ParameterName) => {
-                let qstate = state.PlayerSave.ActiveQuestStates.find(a => a.QuestId === QuestId);
+                const qstate = state.PlayerSave.ActiveQuestStates.find(a => a.QuestId === QuestId);
 
                 if (!qstate) {
                     throw new Error("No Such Quest")
@@ -171,26 +171,24 @@ export const store = createStore({
             },
         GetQuestSection: state =>
             (QuestId) => {
-            let qstate = state.PlayerSave.ActiveQuestStates.find(a => a.QuestId === QuestId);
+                const qstate = state.PlayerSave.ActiveQuestStates.find(a => a.QuestId === QuestId);
 
-            if (!qstate) {
-                throw new Error("No Such Quest")
-            }
-            return qstate.QuestSection;
-        }, GetQuestCompleted: state => (QuestId) => {
+                if (!qstate) {
+                    throw new Error("No Such Quest")
+                }
+                return qstate.QuestSection;
+            }, GetQuestCompleted: state => (QuestId) => {
             return state.PlayerSave.FinishedQuestStates.find(a => a.QuestId === QuestId);
 
 
         },
         GetQuestCreated: state => (QuestId) => {
-            let qstate = state.PlayerSave.ActiveQuestStates.find(a => a.QuestId === QuestId) ||
+            return state.PlayerSave.ActiveQuestStates.find(a => a.QuestId === QuestId) ||
                 state.PlayerSave.FinishedQuestStates.find(a => a.QuestId === QuestId) ||
                 state.PlayerSave.FailedQuestStates.find(a => a.QuestId === QuestId);
-
-            return qstate;
         },
         GetDefaultQuestValue: state => (ParameterName) => {
-            let qstate = state.PlayerSave.ActiveQuestStates.find(a => a.QuestId === "Default");
+            const qstate = state.PlayerSave.ActiveQuestStates.find(a => a.QuestId === "Default");
 
             if (!qstate) {
                 throw new Error("No Such Quest")
